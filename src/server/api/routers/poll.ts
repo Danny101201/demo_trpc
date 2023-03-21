@@ -1,5 +1,5 @@
-import { object, z } from "zod";
 
+import { object, z } from "zod";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -15,7 +15,12 @@ export const pollRouter = createTRPCRouter({
           id: input.pollId
         },
         include: {
-          answers: true
+          answers: {
+            include: {
+              _count: true
+            }
+          },
+          _count: true
         }
       })
       return poll;
@@ -27,7 +32,7 @@ export const pollRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const response = await ctx.prisma.response.create({
         data: {
-          answer_id: input.answer_id
+          answer_id: input.answer_id,
         }
       })
       return response
